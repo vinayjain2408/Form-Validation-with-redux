@@ -1,25 +1,14 @@
 import React from 'react';
+import "./Login.css"
 import { useDispatch, useSelector } from 'react-redux';
-import { login, setEmail, setName, setPassword } from '../features/UserSlice';
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+import { setEmail, setName, setPassword, login ,setPara,setparaEmail,setSubmit, setnamePara} from '../features/UserSlice';
 
 function Login() {
-    const user = useSelector((state) => state.user);
+    const init = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
-    const { name, email, password } = user; // Destructuring user properties
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        dispatch(login({
-            name,
-            email,
-            password,
-            loggedIn: true,
-        }));
-    };
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{8,16}$/
 
     const handleNameChange = (e) => {
         dispatch(setName(e.target.value));
@@ -27,183 +16,90 @@ function Login() {
 
     const handleEmailChange = (e) => {
         const newEmail = e.target.value;
-        if (emailRegex.test(newEmail)) {
-            dispatch(setEmail(newEmail));
+        dispatch(setEmail(newEmail));
+        if ( emailRegex.test(newEmail)) {
+            console.log("Email success");
+            dispatch(setparaEmail("Email is correct"))
+        } else {
+            console.log("Email fail");
+            dispatch(setparaEmail("Give a correct Email "))
         }
     };
 
     const handlePasswordChange = (e) => {
         const newPassword = e.target.value;
-        if (passwordRegex.test(newPassword)) {
-            dispatch(setPassword(newPassword));
+        dispatch(setPassword(newPassword));
+
+        if ( passwordRegex.test(newPassword)) {
+            console.log("Password success");
+            dispatch(setPara("password Success"))
+        } else {
+            console.log("Password fail");
+            dispatch(setPara("Give a correct password"))
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!init.name || !init.email || !init.password) {
+            dispatch( setnamePara("required"));
+            dispatch(setparaEmail("Required"));
+            dispatch(setPara("Required"));
+        }
+        // if(!init.name){
+        //     dispatch(setnamePara("requires"))
+        // }
+        // if(!init.email){
+        //     dispatch(setnamePara("requires"))
+        // }
+        // if(!init.password){
+        //     dispatch(setnamePara("requires"))
+        // }
+        else{
+            dispatch(setSubmit(`${init.name} your form is submitted`));
+            dispatch(setEmail(''));
+            dispatch(setName(''));
+            dispatch(setPassword(''));
+            dispatch(setPara(''))
+            dispatch(setparaEmail(''))
+        }
+
+        
+    };
+
     return (
-        <div>
+        <div className='container'>
             <form onSubmit={handleSubmit}>
                 <h1>Login Here</h1>
                 <input
-                    type="text"
-                    placeholder="Enter Name"
-                    value={name}
+                    type='text'
+                    placeholder='Enter Name'
+                    value={init.name}
                     onChange={handleNameChange}
                 /><br />
+                  {init.namePara && <p>{init.namePara}</p>}
                 <input
-                    type="email"
-                    placeholder="Enter Email"
-                    value={email}
+                    type='email'
+                    placeholder='Enter Email'
+                    value={init.email}
                     onChange={handleEmailChange}
                 /><br />
+                  {init.paraEmail && <p>{init.paraEmail}</p>}
                 <input
-                    type="password"
-                    placeholder="Enter Password"
-                    value={password}
+                    type='password'
+                    placeholder='Enter Password'
+                    value={init.password}
                     onChange={handlePasswordChange}
                 /><br />
-                <button type="submit">Submit</button>
+               {init.para && <p>{init.para}</p>}
+
+
+                <button type='submit'>Submit</button>
+            {init.submit && <h3>{init.submit}</h3>}
             </form>
+            
         </div>
     );
 }
 
 export default Login;
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { login, setEmail, setName, setPassword } from '../features/UserSlice';
-
-// // Regular expression for validating email format
-// const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// // Regular expression for validating password strength (at least 8 characters with at least one uppercase letter, one lowercase letter, and one digit)
-// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-
-// function Login() {
-//     const init = useSelector((state) => state.user);
-//     const dispatch = useDispatch();
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         dispatch(login({
-//             name: init.name,
-//             email: init.email,
-//             password: init.password,
-//             loggedIn: true,
-//         }));
-//     };
-
-//     const handleNameChange = (e) => {
-//         dispatch(setName(e.target.value));
-//     };
-
-//     const handleEmailChange = (e) => {
-//         const newEmail = e.target.value;
-//         if (emailRegex.test(newEmail)) {
-//             dispatch(setEmail(newEmail));
-//         }
-//     };
-
-//     const handlePasswordChange = (e) => {
-//         const newPassword = e.target.value;
-//         if (passwordRegex.test(newPassword)) {
-//             dispatch(setPassword(newPassword));
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <form onSubmit={handleSubmit}>
-//                 <h1>Login Here</h1>
-//                 <input
-//                     type="text"
-//                     placeholder="Enter Name"
-//                     value={init.name}
-//                     onChange={handleNameChange}
-//                 /><br />
-//                 <input
-//                     type="email"
-//                     placeholder="Enter Email"
-//                     value={init.email}
-//                     onChange={handleEmailChange}
-//                 /><br />
-//                 <input
-//                     type="password"
-//                     placeholder="Enter Password"
-//                     value={init.password}
-//                     onChange={handlePasswordChange}
-//                 /><br />
-//                 <button type="submit">Submit</button>
-//             </form>
-//         </div>
-//     );
-// }
-
-// export default Login;
-
-
-
-
-
-
-
-
-// import React from 'react'
-// // import { useState } from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { login, setEmail, setName, setPassword } from '../features/UserSlice'
-
-// function Login() {
-//     // const [name, setName] = useState("")
-//     // const [email, setEmail] = useState("")
-//     // const [password, setPassword] = useState("")
-
-//     const init = useSelector((state) => {
-//         return state.user
-//     });
-//     const dispatch = useDispatch()
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault()
-//         dispatch(login({
-//             name: init.name,
-//             email: init.email,
-//             password: init.password,
-//             loggedIn: true,
-//         }))
-//     }
-//     return (
-//         <div>
-//             <form onSubmit={(e) => handleSubmit(e)}>
-//                 <h1>Login Here</h1>
-//                 <input type='text'
-//                     placeholder='Enter Name'
-//                     value={init.name}
-//                     onChange={(e) => dispatch(setName(e.target.value))} /><br />
-//                 <input type='email'
-//                     placeholder='Enter Email'
-//                     value={init.email}
-//                     onChange={(e) => dispatch(setEmail(e.target.value))} /><br />
-//                 <input type='password'
-//                     placeholder='Enter Password'
-//                     value={init.password}
-//                     onChange={(e) => dispatch(setPassword(e.target.value))} /><br />
-//                 <button type='submit'>Submit</button>
-//             </form>
-//         </div>
-//     )
-// }
-
-// export default Login
